@@ -2,7 +2,6 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
-import { BufferGeometry } from 'three'
 
 /**
  * Base
@@ -14,38 +13,28 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Lights
- */
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-scene.add(ambientLight)
-
-const light = new THREE.PointLight(0xffffff, 0.5)
-light.position.x = 2
-light.position.y = 3
-light.position.z = 4
-scene.add(light)
-
-/**
  * Geometry
  */
 // Create an empty BufferGeometry
 const geometry = new THREE.BufferGeometry()
+const geometry2 = new THREE.BufferGeometry()
 // Create a Float32Array containing the vertices position (3 by 3)
-const positionsArray = new Float32Array([
-    0, 0, 0, // First vertex
-    0, 1, 0, // Second vertex
-    1, 0, 0  // Third vertex
-])
-
-// Create the attribute and name it 'position'
+const count = 8
+const positionsArray = new Float32Array(count * 2 * 3)
+for(let i = 0; i < count * 3 * 3; i++)
+{
+    positionsArray[i] = (Math.random() - 0.5) * 2
+}
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
 geometry.setAttribute('position', positionsAttribute)
+geometry2.setAttribute('position', positionsAttribute)
 
-const material = new THREE.MeshBasicMaterial({ color: 0xA020F0})
-
+const material = new THREE.MeshBasicMaterial({ color: 0xA020F0, wireframe: true})
+const material2 = new THREE.MeshBasicMaterial({color: 0xFFFF00, wireframe: true})
 const mesh = new THREE.Mesh(geometry, material)
+const mesh2 = new THREE.Mesh(geometry2, material2)
 mesh.material.side = THREE.DoubleSide;
-scene.add(mesh)
+scene.add(mesh, mesh2)
 /**
  * Sizes
  */
@@ -118,7 +107,8 @@ const tick = () =>
 
     // Update objects
      mesh.rotation.y = 2 * elapsedTime
-     mesh.rotation.x = 2 * elapsedTime
+     mesh2.rotation.x = 2 * elapsedTime
+    //  mesh.rotation.x = 1 * elapsedTime
 
     // Update controls
     controls.update()
