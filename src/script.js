@@ -6,9 +6,6 @@ import * as dat from 'lil-gui'
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI()
-
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -30,9 +27,6 @@ scene.add(light)
 const material = new THREE.MeshStandardMaterial()
 material.metalness = 0.7
 material.roughness = 0.2
-gui.add(material, 'metalness').min(0).max(1).step(0.0001)
-gui.add(material, 'roughness').min(0).max(1).step(0.0001)
-material.envMap = environmentMapTexture
 
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 64, 64),
@@ -88,6 +82,23 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+
+/**
+ * GUI
+ */
+ const gui = new dat.GUI()
+ const shapeFolder = gui.addFolder('Shape')
+ shapeFolder.add(sphere.rotation, 'x', 0, Math.PI * 2)
+ shapeFolder.add(sphere.rotation, 'y', 0, Math.PI * 2)
+ shapeFolder.add(sphere.rotation, 'z', 0, Math.PI * 2)
+ shapeFolder.add(material, 'metalness').min(0).max(1).step(0.0001)
+ shapeFolder.add(material, 'roughness').min(0).max(1).step(0.0001)
+ shapeFolder.open()
+ const cameraFolder = gui.addFolder('Camera')
+ cameraFolder.add(camera.position, 'z', 0, 10)
+ cameraFolder.add(camera.position, 'x', 0, 10)
+ cameraFolder.add(camera.position, 'y', 0, 10)
+ cameraFolder.open()
 /**
  * Animate
  */
@@ -99,7 +110,6 @@ const tick = () =>
 
     // Update objects
     sphere.rotation.y = 0.1 * elapsedTime
-
     sphere.rotation.x = 0.15 * elapsedTime
 
     // Update controls
