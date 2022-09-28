@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { BufferGeometry } from 'three'
 
 /**
  * Base
@@ -24,18 +25,27 @@ light.position.y = 3
 light.position.z = 4
 scene.add(light)
 
-const material = new THREE.MeshStandardMaterial()
-material.metalness = 0.7
-material.roughness = 0.2
+/**
+ * Geometry
+ */
+// Create an empty BufferGeometry
+const geometry = new THREE.BufferGeometry()
+// Create a Float32Array containing the vertices position (3 by 3)
+const positionsArray = new Float32Array([
+    0, 0, 0, // First vertex
+    0, 1, 0, // Second vertex
+    1, 0, 0  // Third vertex
+])
 
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 64, 64),
-    material
-)
-sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
-sphere.position.x = - 1.5
-scene.add(sphere)
+// Create the attribute and name it 'position'
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+geometry.setAttribute('position', positionsAttribute)
 
+const material = new THREE.MeshBasicMaterial({ color: 0xA020F0})
+
+const mesh = new THREE.Mesh(geometry, material)
+mesh.material.side = THREE.DoubleSide;
+scene.add(mesh)
 /**
  * Sizes
  */
@@ -86,13 +96,11 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 /**
  * GUI
  */
- const gui = new dat.GUI()
- const shapeFolder = gui.addFolder('Shape')
- shapeFolder.add(sphere.rotation, 'x', 0, Math.PI * 2)
- shapeFolder.add(sphere.rotation, 'y', 0, Math.PI * 2)
- shapeFolder.add(sphere.rotation, 'z', 0, Math.PI * 2)
- shapeFolder.add(material, 'metalness').min(0).max(1).step(0.0001)
- shapeFolder.add(material, 'roughness').min(0).max(1).step(0.0001)
+  const gui = new dat.GUI()
+  const shapeFolder = gui.addFolder('Shape Rotation')
+  shapeFolder.add(mesh.rotation, 'x', 0, Math.PI * 2)
+  shapeFolder.add(mesh.rotation, 'y', 0, Math.PI * 2)
+  shapeFolder.add(mesh.rotation, 'z', 0, Math.PI * 2)
  shapeFolder.open()
  const cameraFolder = gui.addFolder('Camera')
  cameraFolder.add(camera.position, 'z', 0, 10)
@@ -109,8 +117,8 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    sphere.rotation.y = 0.1 * elapsedTime
-    sphere.rotation.x = 0.15 * elapsedTime
+     mesh.rotation.y = 2 * elapsedTime
+     mesh.rotation.x = 2 * elapsedTime
 
     // Update controls
     controls.update()
